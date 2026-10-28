@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stiven Ortega | Desarrollador Backend</title>
+  <meta name="description" content="Desarrollador backend en Mocoa, Colombia. APIs REST, sistemas de gestión y páginas web con NestJS, TypeScript y MySQL." />
+  <script>document.documentElement.classList.add('js');</script>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #263040;
+      --text: #e6edf3;
+      --muted: #8b98a9;
+      --accent: #4f9dff;
+      --accent2: #9b6bff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      text-align: center;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+    /* Barra de progreso de scroll */
+    #progreso {
+      position: fixed; top: 0; left: 0; height: 3px; width: 0;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      z-index: 100;
+    }
+
+    /* Fondo animado */
+    .fondo { position: fixed; inset: 0; z-index: -1; overflow: hidden; }
+    .blob {
+      position: absolute; width: 420px; height: 420px; border-radius: 50%;
+      filter: blur(90px); opacity: 0.25;
+    }
+    .blob.uno { background: var(--accent); top: -100px; left: -100px; animation: flotar1 18s ease-in-out infinite; }
+    .blob.dos { background: var(--accent2); bottom: -120px; right: -100px; animation: flotar2 22s ease-in-out infinite; }
+    @keyframes flotar1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(40vw, 30vh) scale(1.2); }
+    }
+    @keyframes flotar2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-40vw, -30vh) scale(1.15); }
+    }
+
+    /* Navegación */
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(13, 17, 23, 0.85);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    nav {
+      display: flex; justify-content: center; align-items: center;
+      gap: 28px; flex-wrap: wrap; min-height: 60px; padding: 8px 0;
+    }
+    nav .logo { font-weight: 700; color: var(--accent); }
+    nav ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; list-style: none; font-size: 0.95rem; }
+    nav ul a { position: relative; padding-bottom: 4px; transition: color 0.2s; }
+    nav ul a::after {
+      content: ""; position: absolute; left: 50%; bottom: 0;
+      width: 0; height: 2px; background: var(--accent);
+      transition: 0.3s; transform: translateX(-50%);
+    }
+    nav ul a:hover, nav ul a.activo { color: var(--accent); }
+    nav ul a:hover::after, nav ul a.activo::after { width: 100%; }
+
+    /* Secciones */
+    section { padding: 80px 0; }
+    h2 { font-size: 1.8rem; margin-bottom: 36px; }
+    h2 span {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+
+    /* Inicio */
+    .hero { padding: 110px 0 90px; }
+    .saludo { display: inline-block; color: var(--accent); font-weight: 600; }
+    .saludo .mano { display: inline-block; animation: saludar 2.5s ease-in-out infinite; transform-origin: 70% 70%; }
+    @keyframes saludar {
+      0%, 60%, 100% { transform: rotate(0); }
+      10%, 30% { transform: rotate(14deg); }
+      20%, 40% { transform: rotate(-8deg); }
+      50% { transform: rotate(10deg); }
+    }
+    .hero h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); line-height: 1.15; margin: 12px 0 16px; }
+    .hero h1 .nombre {
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+      background-size: 200% auto;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      animation: brillo 5s linear infinite;
+    }
+    @keyframes brillo { to { background-position: 200% center; } }
+    .escribiendo { font-size: clamp(1.2rem, 3.5vw, 1.7rem); min-height: 2.2rem; color: var(--text); }
+    .escribiendo .cursor {
+      display: inline-block; width: 2px; height: 1.2em; background: var(--accent);
+      margin-left: 3px; vertical-align: middle; animation: parpadeo 0.8s steps(1) infinite;
+    }
+    @keyframes parpadeo { 50% { opacity: 0; } }
+    .hero p.desc { color: var(--muted); max-width: 600px; margin: 14px auto 0; font-size: 1.05rem; }
+    .botones { display: flex; justify-content: center; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
+    .btn {
+      display: inline-block;
+      padding: 12px 24px; border-radius: 8px; font-weight: 600;
+      border: 1px solid var(--accent); transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(79, 157, 255, 0.25); }
+    .btn.primario { background: var(--accent); color: #0d1117; }
+    .btn.secundario:hover { background: rgba(79, 157, 255, 0.12); }
+    .flecha { margin-top: 50px; font-size: 1.6rem; color: var(--muted); display: inline-block; animation: rebotar 1.6s ease-in-out infinite; }
+    @keyframes rebotar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+
+    /* Tarjetas */
+    .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; }
+    .card {
+      flex: 1 1 270px; max-width: 310px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 26px;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    .card:hover {
+      border-color: var(--accent); transform: translateY(-8px);
+      box-shadow: 0 14px 34px rgba(79, 157, 255, 0.15);
+    }
+    .card .icono { font-size: 2rem; display: inline-block; transition: transform 0.3s; }
+    .card:hover .icono { transform: scale(1.25) rotate(-8deg); }
+    .card h3 { margin: 8px 0; }
+    .card p { color: var(--muted); font-size: 0.95rem; }
+    .tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 16px; }
+    .tags span {
+      font-size: 0.8rem; padding: 4px 12px; border-radius: 20px;
+      background: rgba(79, 157, 255, 0.12); color: var(--accent);
+      transition: transform 0.2s, background 0.2s;
+    }
+    .tags span:hover { transform: translateY(-3px) scale(1.06); background: rgba(79, 157, 255, 0.25); }
+    .enlace { display: inline-block; margin-top: 16px; color: var(--accent); font-size: 0.9rem; transition: transform 0.2s; }
+    .enlace:hover { transform: translateX(5px); }
+
+    /* Panel (contenedor destacado) */
+    .panel {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 34px 26px; max-width: 760px; margin: 0 auto;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .panel:hover { border-color: var(--accent); box-shadow: 0 14px 40px rgba(79, 157, 255, 0.12); }
+
+    /* GitHub */
+    .gh-perfil { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .gh-perfil img.avatar {
+      width: 110px; height: 110px; border-radius: 50%;
+      border: 3px solid var(--accent); box-shadow: 0 0 24px rgba(79, 157, 255, 0.35);
+      animation: pulso 3s ease-in-out infinite;
+    }
+    @keyframes pulso {
+      0%, 100% { box-shadow: 0 0 18px rgba(79, 157, 255, 0.3); }
+      50% { box-shadow: 0 0 34px rgba(155, 107, 255, 0.5); }
+    }
+    .gh-perfil h3 { font-size: 1.3rem; margin-top: 8px; }
+    .gh-perfil .bio { color: var(--muted); max-width: 460px; }
+    .stats { display: flex; justify-content: center; gap: 30px; margin: 18px 0 4px; flex-wrap: wrap; }
+    .stats div strong { display: block; font-size: 1.5rem; color: var(--accent); }
+    .stats div small { color: var(--muted); }
+    .contribuciones { margin-top: 24px; }
+    .contribuciones img { max-width: 100%; border-radius: 8px; }
+    .repos { margin-top: 36px; }
+    .repos h4 { margin-bottom: 18px; color: var(--muted); font-weight: 600; }
+    .card .meta { display: flex; justify-content: center; gap: 16px; margin-top: 12px; font-size: 0.85rem; color: var(--muted); }
+
+    /* LinkedIn */
+    .li-icono {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 78px; height: 78px; border-radius: 18px;
+      background: #0a66c2; color: #fff; font-weight: 800; font-size: 2.2rem;
+      margin-bottom: 18px; animation: flotarIcono 3.5s ease-in-out infinite;
+    }
+    @keyframes flotarIcono { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .panel p.texto { color: var(--muted); max-width: 520px; margin: 0 auto; }
+
+    /* Sobre mí */
+    .sobre { display: grid; gap: 16px; color: var(--muted); max-width: 720px; margin: 0 auto; }
+    .subtitulo { margin-top: 60px; }
+
+    /* Línea de tiempo centrada */
+    .timeline { position: relative; max-width: 560px; margin: 0 auto; display: grid; gap: 40px; }
+    .timeline::before {
+      content: ""; position: absolute; left: 50%; top: 0; bottom: 0;
+      width: 2px; background: var(--border); transform: translateX(-50%); z-index: -1;
+    }
+    .timeline .item {
+      position: relative; background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 22px; transition: transform 0.3s, border-color 0.3s;
+    }
+    .timeline .item:hover { border-color: var(--accent); transform: scale(1.03); }
+    .timeline .item::before {
+      content: ""; position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+      width: 14px; height: 14px; border-radius: 50%; background: var(--accent);
+      box-shadow: 0 0 0 4px var(--bg), 0 0 14px var(--accent);
+    }
+    .timeline h3 { font-size: 1.05rem; }
+    .timeline small { color: var(--accent); }
+    .timeline p { color: var(--muted); font-size: 0.95rem; margin-top: 6px; }
+
+    /* Contacto */
+    .contacto p.intro { color: var(--muted); margin-bottom: 24px; }
+
+    footer { padding: 26px 0; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); }
+
+    /* ===== Animaciones de aparición (bajando Y subiendo) ===== */
+    .reveal { --from: translateY(35px); }
+    .reveal.izq { --from: translateX(-70px); }
+    .reveal.der { --from: translateX(70px); }
+    .reveal.zoom { --from: scale(0.85); }
+    .reveal.arriba { --from: translateY(-35px); }
+
+    @keyframes aparecer {
+      from { opacity: 0; transform: var(--from); }
+    }
+    /* Oculto cuando está fuera de pantalla */
+    .js .reveal:not(.visible) { opacity: 0; transform: var(--from); }
+    /* Al entrar en pantalla (por arriba o por abajo) se reproduce la animación */
+    .js .reveal.visible {
+      animation: aparecer 0.75s cubic-bezier(.2, .7, .2, 1) backwards;
+      animation-delay: var(--d, 0s);
+    }
+
+    @media (max-width: 640px) {
+      nav { gap: 10px; }
+      nav ul { gap: 12px; font-size: 0.85rem; }
+      section { padding: 55px 0; }
+      .reveal.izq, .reveal.der { --from: translateY(35px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .js .reveal:not(.visible) { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="progreso"></div>
+  <div class="fondo"><div class="blob uno"></div><div class="blob dos"></div></div>
+
+  <header>
+    <div class="container">
+      <nav>
+        <a href="#inicio" class="logo">&lt;Stiven /&gt;</a>
+        <ul>
+          <li><a href="#servicios">Servicios</a></li>
+          <li><a href="#proyectos">Proyectos</a></li>
+          <li><a href="#github">GitHub</a></li>
+          <li><a href="#sobre-mi">Sobre mí</a></li>
+          <li><a href="#linkedin">LinkedIn</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- INICIO -->
+    <section class="hero" id="inicio">
+      <div class="container">
+        <span class="saludo reveal arriba"><span class="mano">👋</span> Hola, soy</span>
+        <h1 class="reveal zoom" style="--d:.1s">
+          <span class="nombre">Stiven Ortega</span>
+        </h1>
+        <div class="escribiendo reveal" style="--d:.2s">
+          <span id="texto"></span><span class="cursor"></span>
+        </div>
+        <p class="desc reveal" style="--d:.3s">
+          Construyo APIs, sistemas de gestión y páginas web para negocios y emprendedores.
+          Estudiante de Desarrollo de Software en Mocoa, Putumayo.
+        </p>
+        <div class="botones reveal" style="--d:.4s">
+          <a href="#contacto" class="btn primario">Contáctame</a>
+          <a href="#proyectos" class="btn secundario">Ver proyectos</a>
+        </div>
+        <a href="#servicios" class="flecha" aria-label="Bajar">↓</a>
+      </div>
+    </section>
+
+    <!-- SERVICIOS -->
+    <section id="servicios">
+      <div class="container">
+        <h2 class="reveal">¿Qué <span>puedo hacer</span> por ti?</h2>
+        <div class="grid">
+          <div class="card reveal zoom">
+            <span class="icono">🔌</span>
+            <h3>APIs y backend</h3>
+            <p>APIs REST seguras con autenticación, roles y base de datos bien diseñada.</p>
+          </div>
+          <div class="card reveal zoom">
+            <span class="icono">📋</span>
+            <h3>Sistemas de gestión</h3>
+            <p>Aplicaciones para controlar inventario, cobros, reservas o clientes de tu negocio.</p>
+          </div>
+          <div class="card reveal zoom">
+            <span class="icono">🌐</span>
+            <h3>Páginas web</h3>
+            <p>Sitios y landing pages rápidos, claros y adaptados a celular para tu negocio.</p>
+          </div>
+          <div class="card reveal zoom">
+            <span class="icono">🤖</span>
+            <h3>Automatizaciones</h3>
+            <p>Bots y procesos automáticos que te ahorran tiempo en tareas repetitivas.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROYECTOS -->
+    <section id="proyectos">
+      <div class="container">
+        <h2 class="reveal">Proyectos <span>destacados</span></h2>
+        <div class="grid">
+          <div class="card reveal izq">
+            <h3>ForgeHub</h3>
+            <p>Plataforma abierta para la creación y colaboración digital, con backend en NestJS y frontend en React.</p>
+            <div class="tags"><span>NestJS</span><span>React</span><span>TypeScript</span></div>
+            <a class="enlace" data-repo="forgehub-web" target="_blank" rel="noopener">Ver en GitHub →</a>
+          </div>
+          <div class="card reveal">
+            <h3>DevCommunity</h3>
+            <p>API de foro en equipo con registro, autenticación y control de permisos por roles. Me encargué de la autenticación y autorización.</p>
+            <div class="tags"><span>NestJS</span><span>MySQL</span><span>TypeORM</span></div>
+            <a class="enlace" data-repo="DevCommunity" target="_blank" rel="noopener">Ver en GitHub →</a>
+          </div>
+          <div class="card reveal der">
+            <h3>App de cobros diarios</h3>
+            <p>Sistema para registrar y controlar cobros diarios, con versión para Android y escritorio. Encargo real para un cliente.</p>
+            <div class="tags"><span>Base de datos</span><span>Android</span><span>Escritorio</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GITHUB -->
+    <section id="github">
+      <div class="container">
+        <h2 class="reveal">Mi <span>GitHub</span></h2>
+
+        <div class="panel reveal zoom">
+          <div class="gh-perfil">
+            <img class="avatar" id="gh-avatar" alt="Foto de perfil de GitHub" />
+            <h3 id="gh-nombre">Stiven Ortega</h3>
+            <p class="bio" id="gh-bio">Aquí puedes ver mi código, mis proyectos y mi actividad.</p>
+          </div>
+
+          <div class="stats" id="gh-stats" hidden>
+            <div><strong id="gh-repos">0</strong><small>Repositorios</small></div>
+            <div><strong id="gh-seguidores">0</strong><small>Seguidores</small></div>
+            <div><strong id="gh-siguiendo">0</strong><small>Siguiendo</small></div>
+          </div>
+
+          <div class="contribuciones">
+            <img id="gh-grafica" alt="Gráfica de contribuciones de GitHub" />
+          </div>
+
+          <div class="botones">
+            <a class="btn primario" data-link="github" target="_blank" rel="noopener">Ver mi GitHub</a>
+          </div>
+        </div>
+
+        <div class="repos" id="gh-repos-bloque" hidden>
+          <h4 class="reveal">Repositorios recientes</h4>
+          <div class="grid" id="gh-repos-lista"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOBRE MÍ -->
+    <section id="sobre-mi">
+      <div class="container">
+        <h2 class="reveal">Sobre <span>mí</span></h2>
+        <div class="sobre panel reveal zoom">
+          <p>
+            Estudio Tecnología en Desarrollo de Software en la Institución Universitaria del Putumayo.
+            Me enfoco en backend: APIs REST, bases de datos, autenticación y pruebas de software.
+          </p>
+          <p>
+            Tengo formación técnica en sistemas y redes, y experiencia en campo como técnico de redes
+            y fibra óptica y como asesor de atención al cliente. Eso me ayuda a entender el proyecto
+            completo y a explicar lo técnico de forma sencilla.
+          </p>
+        </div>
+
+        <h2 class="subtitulo reveal">Tecnologías</h2>
+        <div class="tags reveal zoom">
+          <span>NestJS</span><span>TypeScript</span><span>Node.js</span><span>JavaScript</span>
+          <span>React</span><span>MySQL</span><span>MongoDB</span><span>TypeORM</span>
+          <span>Docker</span><span>Git</span><span>Postman</span><span>Redes</span>
+        </div>
+
+        <h2 class="subtitulo reveal">Experiencia</h2>
+        <div class="timeline">
+          <div class="item reveal izq">
+            <h3>Técnico de Redes y Fibra Óptica</h3>
+            <small>VILLACONN · 14/06/2025 - 31/12/2025</small>
+            <p>Instalación, configuración y mantenimiento de redes de fibra óptica; diagnóstico y reparación de fallas.</p>
+          </div>
+          <div class="item reveal der">
+            <h3>Asesor de Atención al Cliente</h3>
+            <small>SELVANET · 01/02/2023 - 13/06/2025</small>
+            <p>Atención de consultas y fallas de internet, seguimiento de reclamos y coordinación con soporte técnico.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LINKEDIN -->
+    <section id="linkedin">
+      <div class="container">
+        <h2 class="reveal">Mi <span>LinkedIn</span></h2>
+        <div class="panel reveal zoom">
+          <div class="li-icono">in</div>
+          <h3>Conectemos profesionalmente</h3>
+          <p class="texto" style="margin-top:10px;">
+            En mi perfil de LinkedIn encuentras mi experiencia, mi formación y mis aptitudes.
+            Escríbeme si buscas un desarrollador para tu equipo o tu proyecto.
+          </p>
+          <div class="tags">
+            <span>Experiencia</span><span>Educación</span><span>Aptitudes</span><span>Proyectos</span>
+          </div>
+          <div class="botones">
+            <a class="btn primario" data-link="linkedin" target="_blank" rel="noopener">Ver mi LinkedIn</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section class="contacto" id="contacto">
+      <div class="container">
+        <h2 class="reveal">¿Tienes un <span>proyecto</span> en mente?</h2>
+        <p class="intro reveal" style="--d:.1s">Cuéntame qué necesitas y te respondo lo antes posible.</p>
+        <div class="botones reveal zoom" style="--d:.2s">
+          <a class="btn primario" data-link="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
+          <a class="btn secundario" data-link="correo">Correo</a>
+          <a class="btn secundario" data-link="github" target="_blank" rel="noopener">GitHub</a>
+          <a class="btn secundario" data-link="linkedin" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 Stiven Ortega · Mocoa, Putumayo, Colombia</p>
+  </footer>
+
+  <script>
+    // ===== CONFIGURACIÓN: cambia solo estos datos =====
+    const CONFIG = {
+      githubUsuario: "StivenOrt",
+      linkedinUrl: "https://www.linkedin.com/in/stiven-alexander-ortega-rodriguez-0422a3350",
+      whatsapp: "573239355001",         
+      correo: "stivenortega2711@gmail.com"
+    };
+
+    // ===== Enlaces automáticos =====
+    const enlacesConfig = {
+      github: "https://github.com/" + CONFIG.githubUsuario,
+      linkedin: CONFIG.linkedinUrl,
+      whatsapp: "https://wa.me/" + CONFIG.whatsapp +
+        "?text=" + encodeURIComponent("Hola Stiven, vi tu portafolio y quiero hablar de un proyecto"),
+      correo: "mailto:" + CONFIG.correo
+    };
+    document.querySelectorAll("[data-link]").forEach(a => {
+      a.href = enlacesConfig[a.dataset.link];
+    });
+    document.querySelectorAll("[data-repo]").forEach(a => {
+      a.href = "https://github.com/" + CONFIG.githubUsuario + "/" + a.dataset.repo;
+    });
+
+    // ===== Efecto de escritura =====
+    const frases = [
+      "Desarrollador backend",
+      "Creador de APIs",
+      "Constructor de sistemas de gestión",
+      "Técnico en redes"
+    ];
+    const destino = document.getElementById("texto");
+    let f = 0, c = 0, borrando = false;
+
+    function escribir() {
+      const frase = frases[f];
+      destino.textContent = frase.substring(0, c);
+      if (!borrando && c < frase.length) {
+        c++; setTimeout(escribir, 80);
+      } else if (!borrando) {
+        borrando = true; setTimeout(escribir, 1500);
+      } else if (c > 0) {
+        c--; setTimeout(escribir, 40);
+      } else {
+        borrando = false; f = (f + 1) % frases.length; setTimeout(escribir, 300);
+      }
+    }
+    escribir();
+
+    // ===== Aparición al bajar Y al subir =====
+    // Cada vez que un elemento entra en pantalla se reproduce la animación;
+    // al salir se reinicia, así funciona igual en ambas direcciones.
+    const observador = new IntersectionObserver((entradas) => {
+      entradas.forEach(e => e.target.classList.toggle("visible", e.isIntersecting));
+    }, { threshold: 0.12 });
+
+    function observar(el) { observador.observe(el); }
+
+    function escalonar(contenedor) {
+      contenedor.querySelectorAll(":scope > .reveal").forEach((el, i) => {
+        el.style.setProperty("--d", (i * 0.12) + "s");
+      });
+    }
+    document.querySelectorAll(".grid, .timeline, .tags").forEach(escalonar);
+    document.querySelectorAll(".reveal").forEach(observar);
+
+    // ===== Barra de progreso de scroll =====
+    const barra = document.getElementById("progreso");
+    window.addEventListener("scroll", () => {
+      const alto = document.documentElement.scrollHeight - window.innerHeight;
+      barra.style.width = (window.scrollY / alto * 100) + "%";
+    });
+
+    // ===== Enlace activo en el menú =====
+    const enlaces = document.querySelectorAll("nav ul a");
+    const secciones = [...enlaces].map(a => document.querySelector(a.getAttribute("href")));
+    const vigia = new IntersectionObserver((entradas) => {
+      entradas.forEach(e => {
+        if (e.isIntersecting) {
+          enlaces.forEach(a => a.classList.toggle("activo", a.getAttribute("href") === "#" + e.target.id));
+        }
+      });
+    }, { rootMargin: "-50% 0px -50% 0px" });
+    secciones.forEach(s => s && vigia.observe(s));
+
+    // ===== GitHub: datos en vivo =====
+    const escapar = (t) => String(t ?? "").replace(/[&<>"']/g, m => (
+      { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]
+    ));
+
+    const avatar = document.getElementById("gh-avatar");
+    avatar.src = "https://github.com/" + CONFIG.githubUsuario + ".png?size=220";
+    const grafica = document.getElementById("gh-grafica");
+    grafica.src = "https://ghchart.rshah.org/4f9dff/" + CONFIG.githubUsuario;
+    grafica.onerror = () => grafica.parentElement.remove();
+
+    async function cargarGithub() {
+      try {
+        const base = "https://api.github.com/users/" + CONFIG.githubUsuario;
+        const [rPerfil, rRepos] = await Promise.all([
+          fetch(base),
+          fetch(base + "/repos?sort=pushed&per_page=30")
+        ]);
+        if (!rPerfil.ok || !rRepos.ok) throw new Error("GitHub no respondió");
+        const perfil = await rPerfil.json();
+        const repos = await rRepos.json();
+
+        document.getElementById("gh-nombre").textContent = perfil.name || perfil.login;
+        if (perfil.bio) document.getElementById("gh-bio").textContent = perfil.bio;
+        document.getElementById("gh-repos").textContent = perfil.public_repos;
+        document.getElementById("gh-seguidores").textContent = perfil.followers;
+        document.getElementById("gh-siguiendo").textContent = perfil.following;
+        document.getElementById("gh-stats").hidden = false;
+
+        const lista = document.getElementById("gh-repos-lista");
+        const destacados = repos.filter(r => !r.fork).slice(0, 3);
+        if (destacados.length) {
+          lista.innerHTML = destacados.map(r => `
+            <div class="card reveal zoom">
+              <h3>${escapar(r.name)}</h3>
+              <p>${escapar(r.description || "Sin descripción todavía.")}</p>
+              <div class="meta">
+                ${r.language ? `<span>● ${escapar(r.language)}</span>` : ""}
+                <span>★ ${r.stargazers_count}</span>
+              </div>
+              <a class="enlace" href="${escapar(r.html_url)}" target="_blank" rel="noopener">Ver repositorio →</a>
+            </div>`).join("");
+          escalonar(lista);
+          lista.querySelectorAll(".reveal").forEach(observar);
+          document.getElementById("gh-repos-bloque").hidden = false;
+        }
+      } catch (error) {
+        // Si falla la API, la sección sigue funcionando con el botón y la foto.
+        console.warn("No se pudieron cargar los datos de GitHub:", error);
+      }
+    }
+    cargarGithub();
+  </script>
+
+</body>
+</html>
